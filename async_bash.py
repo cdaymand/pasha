@@ -4,14 +4,16 @@ import asyncio
 import sys
 
 from argparse import ArgumentParser
-from collections import OrderedDict, Iterable
+from collections import OrderedDict
+from collections.abc import Iterable
 from termcolor import colored
 
 
 class AsyncCommand():
-    def __init__(self, command_line, semaphore):
+    def __init__(self, command_line, semaphore, returncode):
         self.commands = self.get_all_commands(command_line)
         self.semaphore = asyncio.Semaphore(semaphore)
+        self.returncode = returncode
 
     def run(self):
         self.result = {}
@@ -69,10 +71,11 @@ class AsyncCommand():
                                                            stderr=asyncio.subprocess.PIPE)
             stdout, stderr = await process.communicate()
             self.print_progress(process.returncode)
-            self.result[" ".join(command)] = OrderedDict([
-                ("returncode", process.returncode),
-                ("stdout", stdout.decode("utf8").split("\n")),
-                ("stderr", stderr.decode("utf8").split("\n"))])
+            if self.returncode is None or process.returncode == self.returncode:
+                self.result[" ".join(command)] = OrderedDict([
+                    ("returncode", process.returncode),
+                    ("stdout", stdout.decode("utf8").split("\n")),
+                    ("stderr", stderr.decode("utf8").split("\n"))])
 
     async def execute_commands(self):
         tasks = []
@@ -84,6 +87,7 @@ class AsyncCommand():
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('-s', '--semaphore', nargs='?', type=int, default=100, help="Number of commands to execute at the same time")
+    parser.add_argument('-r', '--returncode', nargs='?', type=int, help="Only show output for the selected returncode")
     args, command_line = parser.parse_known_args()
-    async_command = AsyncCommand(command_line, args.semaphore)
+    async_command = AsyncCommand(command_line, args.semaphore, args.returncode)
     async_command.run()
