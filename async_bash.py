@@ -4,7 +4,7 @@ import asyncio
 import sys
 
 from argparse import ArgumentParser
-from collections import OrderedDict
+from collections import OrderedDict, Iterable
 from termcolor import colored
 
 
@@ -26,15 +26,25 @@ class AsyncCommand():
         loop.close()
         print(" " * 50, file=sys.stderr)
         print(json.dumps(self.result, indent=4, ensure_ascii=False))
+
+    def find_python_substring(self, string_list):
+        for index in range(len(string_list)):
+            try:
+                parameters = eval(string_list[index])
+                if not isinstance(parameters, str) and isinstance(parameters, Iterable):
+                    return (index, parameters)
+            except (NameError, SyntaxError, TypeError) as exception:
+                pass
+        else:
+            return None
         
     def get_all_commands(self, command_line):
         commands = []
-        for element in command_line:
-            if element.startswith('[') and element.endswith(']'):
-                index = command_line.index(element)
-                for parameter in eval(element):
-                    commands += self.get_all_commands(command_line[:index]+[str(parameter)]+command_line[index+1:])
-                break
+        python_substring = self.find_python_substring(command_line)
+        if python_substring is not None:
+            (index, parameters) = python_substring
+            for parameter in parameters:
+                commands += self.get_all_commands(command_line[:index]+[str(parameter)]+command_line[index+1:])
         else:
             commands.append(command_line)
         return commands
@@ -75,6 +85,5 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('-s', '--semaphore', nargs='?', type=int, default=100, help="Number of commands to execute at the same time")
     args, command_line = parser.parse_known_args()
-    print(command_line)
     async_command = AsyncCommand(command_line, args.semaphore)
     async_command.run()
