@@ -7,6 +7,7 @@ from argparse import ArgumentParser
 from collections import OrderedDict
 from collections.abc import Iterable
 from termcolor import colored
+from netaddr import IPNetwork
 
 
 class AsyncCommand():
