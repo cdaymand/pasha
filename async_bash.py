@@ -11,7 +11,12 @@ from netaddr import IPNetwork
 
 
 class AsyncCommand():
-    def __init__(self, command_line, semaphore, returncode):
+    def __init__(self, command_line, semaphore, returncode, json_files):
+        self.json = {}
+        if json_files is not None:
+            for filename in json_files:
+                with open(filename, 'r') as fd:
+                    self.json[filename] = json.load(fd)
         self.commands = self.get_all_commands(command_line)
         self.semaphore = asyncio.Semaphore(semaphore)
         self.returncode = returncode
@@ -89,6 +94,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('-s', '--semaphore', nargs='?', type=int, default=100, help="Number of commands to execute at the same time")
     parser.add_argument('-r', '--returncode', nargs='?', type=int, help="Only show output for the selected returncode")
+    parser.add_argument('-j', '--json', nargs='?', type=str, action="append", help="Access json iterators with self.json['JSON']")
     args, command_line = parser.parse_known_args()
-    async_command = AsyncCommand(command_line, args.semaphore, args.returncode)
+    async_command = AsyncCommand(command_line, args.semaphore, args.returncode, args.json)
     async_command.run()
