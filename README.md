@@ -1,6 +1,6 @@
 # pasha
 Python 3 Async shell Accelerated.
-The aim of this repository is to share python3 scripts to increase your shell productivity.
+The aim of this repository is to share python3 scripts to increase shell productivity.
 Currently only one script is available but I have some other scripts ideas ;)
 
 ## async_bash.py
