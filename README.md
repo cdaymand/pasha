@@ -49,3 +49,11 @@ Try 2 icmp requests to each ip of the 192.168.1.0/24 network and only display su
 ./async_bash.py grep "['error', 'warning']" "['/var/log/messages{}'.format(x) for x in ['', '.1']]"
 ```
 Show an example using two iterators
+
+### Requirements
+```
+netaddr==0.7.19
+termcolor==1.1.0
+```
+* netaddr for IPNetwork class
+* termcolor for colored success and failures during progress
