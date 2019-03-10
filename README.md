@@ -24,7 +24,7 @@ optional arguments:
                         Access json iterators with self.json['JSON']
 ```
 
-* The semaphore option allow to choose the nimber of shell process running in parallel (100 by default)
+* The semaphore option allow to choose the number of shell process running in parallel (100 by default)
 * The returncode option allow to show only success "-r0" or any error code you want
 * The json option can be called multiple times and allow to access data from a json file
 
