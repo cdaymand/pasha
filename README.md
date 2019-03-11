@@ -29,12 +29,6 @@ In the command line, each python iterators should be separated with a space and 
 
 When running, the script will show in stderr a summary of the progress.
 
-### Special python functions or classes
-
-* The IPNetwork class is imported from the netaddr package as it can be used as an Iterator for IP Addresses.
-* The bash(command) special function allow to get the stdout of a bash command
-* The load_json(filename) do json.load() on the file descriptor of the filename
-
 ### Examples
 ```
 ./async_bash.py sleep "range(1, 10)"
@@ -42,14 +36,55 @@ When running, the script will show in stderr a summary of the progress.
 No utility except showing how it works.
 
 ```
-./async_bash.py -r0 ping -c2 "IPNetwork('192.168.1.0/24')"
-```
-Try 2 icmp requests to each ip of the 192.168.1.0/24 network and only display success.
-
-```
 ./async_bash.py grep "['error', 'warning']" "['/var/log/messages{}'.format(x) for x in ['', '.1']]"
 ```
 Show an example using two iterators
+
+### Special python functions or classes
+
+* The IPNetwork class is imported from the netaddr package as it can be used as an Iterator for IP Addresses.
+Example : Try 2 icmp requests to each ip of the 192.168.1.0/24 network and only display success :
+```
+./async_bash.py -r0 ping -c2 "IPNetwork('192.168.1.0/24')"
+```
+
+* The bash(command) special function allow to get the stdout of a bash command
+Example : cat every file of a folder
+```
+./async_bash.py cat "bash('ls').split('\n')"
+```
+
+* The load_json(filename) do json.load() on the file descriptor of the filename
+Example : toto.json contains ["1", "2"]
+```
+./async_bash.py echo "load_json('toto.json')"
+```
+will display
+```
+{
+    "echo 2": {
+        "returncode": 0,
+        "stdout": [
+            "2",
+            ""
+        ],
+        "stderr": [
+            ""
+        ]
+    },
+    "echo 1": {
+        "returncode": 0,
+        "stdout": [
+            "1",
+            ""
+        ],
+        "stderr": [
+            ""
+        ]
+    }
+}
+```
+
 
 ### Requirements
 ```
