@@ -47,7 +47,9 @@ class AsyncCommand():
         for index in range(len(string_list)):
             try:
                 parameters = eval(string_list[index])
-                if not isinstance(parameters, str) and isinstance(parameters, Iterable):
+                if isinstance(parameters, str):
+                    return (index, [parameters])
+                elif isinstance(parameters, Iterable):
                     return (index, parameters)
             except (NameError, SyntaxError, TypeError) as exception:
                 pass
