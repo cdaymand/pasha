@@ -8,6 +8,13 @@ from collections import OrderedDict
 from collections.abc import Iterable
 from termcolor import colored
 from netaddr import IPNetwork
+from subprocess import Popen, PIPE
+
+
+def bash(command):
+    process = Popen(command.split(), stdout=PIPE)
+    stdout, _ = process.communicate()
+    return stdout.decode('utf8')
 
 
 class AsyncCommand():
