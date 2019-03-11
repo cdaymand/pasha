@@ -14,7 +14,7 @@ from subprocess import Popen, PIPE
 def bash(command):
     process = Popen(command.split(), stdout=PIPE)
     stdout, _ = process.communicate()
-    return stdout.decode('utf8')
+    return stdout.decode('utf8').split('\n')
 
 
 def load_json(filename):
