@@ -9,7 +9,7 @@ The script will evaluates these iterators, collect all the commands, run them as
 
 ### Usage
 ```
-usage: async_bash.py [-h] [-s [SEMAPHORE]] [-r [RETURNCODE]] [-j [JSON]] ...
+usage: async_bash.py [-h] [-s [SEMAPHORE]] [-r [RETURNCODE]] ...
 
 positional arguments:
   command_line
@@ -20,19 +20,20 @@ optional arguments:
                         Number of commands to execute at the same time
   -r [RETURNCODE], --returncode [RETURNCODE]
                         Only show output for the selected returncode
-  -j [JSON], --json [JSON]
-                        Access json iterators with self.json['JSON']
 ```
 
 * The semaphore option allow to choose the number of shell process running in parallel (100 by default)
 * The returncode option allow to show only success "-r0" or any error code you want
-* The json option can be called multiple times and allow to access data from a json file
 
 In the command line, each python iterators should be separated with a space and placed between quotes simple or double and you can use the other type of quotes to declare string values. Lists, list comprehension and any iterators can be used.
 
-The IPNetwork class is imported from the netaddr package as it can be used as an Iterator for IP Addresses.
-
 When running, the script will show in stderr a summary of the progress.
+
+### Special python functions or classes
+
+* The IPNetwork class is imported from the netaddr package as it can be used as an Iterator for IP Addresses.
+* The bash(command) special function allow to get the stdout of a bash command
+* The load_json(filename) do json.load() on the file descriptor of the filename
 
 ### Examples
 ```
