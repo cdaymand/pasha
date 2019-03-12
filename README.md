@@ -1,7 +1,6 @@
 # pasha
 Python 3 Async shell Accelerated.
 The aim of this repository is to share python3 scripts to increase shell productivity.
-Currently only one script is available but I have some other scripts ideas ;)
 
 ## async_bash.py
 This script allow to write a shell command line integrating one to many python iterators.
@@ -95,3 +94,21 @@ termcolor==1.1.0
 ```
 * netaddr for IPNetwork class
 * termcolor for colored success and failures during progress
+
+## watch.py
+This script has exactly the same use as the watch shell command except it shows differences with the previous output.
+
+![](watch.gif)
+
+### Usage
+```
+usage: watch.py [-h] [-n [INTERVAL]] ...
+
+positional arguments:
+  command_line
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -n [INTERVAL], --interval [INTERVAL]
+                        Refresh interval
+```
