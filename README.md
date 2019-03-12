@@ -53,7 +53,7 @@ Example : Try 2 icmp requests to each ip of the 192.168.1.0/24 network and only 
 * The bash(command) special function allow to get the stdout of a bash command
 Example : cat every file of a folder
 ```
-./async_bash.py cat "bash('ls').split('\n')"
+./async_bash.py cat "bash('ls')"
 ```
 
 * The load_json(filename) do json.load() on the file descriptor of the filename
