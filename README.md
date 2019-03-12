@@ -7,6 +7,8 @@ Currently only one script is available but I have some other scripts ideas ;)
 This script allow to write a shell command line integrating one to many python iterators.
 The script will evaluates these iterators, collect all the commands, run them asynchronously and show the result using a json format.
 
+![](async_bash.gif)
+
 ### Usage
 ```
 usage: async_bash.py [-h] [-s [SEMAPHORE]] [-r [RETURNCODE]] ...
