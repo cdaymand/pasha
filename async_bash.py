@@ -55,14 +55,14 @@ class AsyncCommand():
                 pass
         else:
             return None
-        
+
     def get_all_commands(self, command_line):
         commands = []
         python_substring = self.find_python_substring(command_line)
         if python_substring is not None:
             (index, parameters) = python_substring
             for parameter in parameters:
-                commands += self.get_all_commands(command_line[:index]+[str(parameter)]+command_line[index+1:])
+                commands += self.get_all_commands(command_line[:index] + str(parameter).split() + command_line[index+1:])
         else:
             commands.append(command_line)
         return commands
