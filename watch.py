@@ -20,7 +20,7 @@ class WatchProcess():
         }
         try:
             while True:
-                stdout = check_output(self.command_line).decode('utf8').split('\n')
+                stdout = check_output(" ".join(self.command_line), shell=True).decode('utf8').split('\n')
                 os.system('clear')
                 print("Every {:.1f}s: {}\t{}\n".format(self.interval,
                                                        " ".join(self.command_line),
