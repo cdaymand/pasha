@@ -2,6 +2,16 @@
 Python 3 Async shell Accelerated.
 The aim of this repository is to share python3 scripts to increase shell productivity.
 
+### Requirements
+```
+netaddr==0.7.19
+pyroute2==0.5.4
+termcolor==1.1.0
+```
+* netaddr for IPNetwork class
+* termcolor for colored success and failures during progress
+* pyroute2 for tcp information during scp.py progress
+
 # Table of Contents
 1. [async_bash.py](#async_bashpy)
 2. [watch.py](#watchpy)
@@ -90,15 +100,6 @@ will display
     }
 }
 ```
-
-
-### Requirements
-```
-netaddr==0.7.19
-termcolor==1.1.0
-```
-* netaddr for IPNetwork class
-* termcolor for colored success and failures during progress
 
 ## watch.py
 This script has exactly the same use as the watch shell command except it shows differences with the previous output.
