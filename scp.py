@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
+import time
 import asyncio
+import sys
 
 from argparse import ArgumentParser
 from collections import OrderedDict
@@ -14,12 +16,22 @@ from pyroute2.netlink import NLM_F_DUMP
 
 
 INET_DIAG_INFO = 2
-HUMAN_READABLE_BYTES = (
-    ("GB", 10**9),
-    ("MB", 10**6),
-    ("kB", 10**3),
-    ("B", 1)
+HUMAN_READABLE_UNITS = (
+    ("G", 10**9),
+    ("M", 10**6),
+    ("k", 10**3),
+    ("", 1)
 )
+
+
+def get_human_readable_value(value):
+    value = int(value)
+    for unit in HUMAN_READABLE_UNITS:
+        if value / unit[1] >= 1:
+            return "{0:.2f} {unit}".format(value/unit[1],
+                                           unit=unit[0])
+    else:
+        return "{0:.2f} ".format(value)
 
 
 def get_tcp_sockets_infos(dport):
@@ -40,8 +52,10 @@ class AsyncScp(AsyncCommand):
         command_line = ['scp', '-P', str(port)] + command_line
         self.port = port
         AsyncCommand.__init__(self, command_line, semaphore, None)
-        # Exclude already established sockets (don't take into account ssh connections or other scp)
-        self.excluded_sports = [socket['idiag_sport'] for socket in get_tcp_sockets_infos(self.port)]
+        # Exclude already established sockets
+        # (don't take into account ssh connections or other scp)
+        self.excluded_sports = [socket['idiag_sport']
+                                for socket in get_tcp_sockets_infos(self.port)]
         self.servers = OrderedDict()
         for command in self.commands:
             for element in command:
@@ -52,24 +66,18 @@ class AsyncScp(AsyncCommand):
                         self.servers[ip_address] = {
                             'server': server,
                             'bytes_acked': 0,
-                            'bytes_received': 0
+                            'bytes_received': 0,
+                            'bitrate_sent': 0,
+                            'bitrate_received': 0,
+                            'timestamp': time.time()
                         }
                         break
                     except gaierror:
                         continue
         self.remaining_scp = len(self.servers.keys())
 
-    def run(self):
-        loop = asyncio.get_event_loop()
-        try:
-            loop.run_until_complete(self.execute_commands())
-        except (KeyboardInterrupt):
-            pass
-        loop.close()
-
     async def display_information(self):
         while self.remaining_scp > 0:
-            await asyncio.sleep(3)
             os.system('clear')
             tcp_infos = get_tcp_sockets_infos(self.port)
             for tcp_info in tcp_infos:
@@ -77,28 +85,29 @@ class AsyncScp(AsyncCommand):
                     continue
                 dst = tcp_info["idiag_dst"]
                 if dst in self.servers:
+                    now = time.time()
+                    timedelta = now - self.servers[dst]['timestamp']
+                    bytes_sent_delta = tcp_info.get_attr('INET_DIAG_INFO')['tcpi_bytes_acked'] - self.servers[dst]['bytes_acked']
+                    bytes_received_delta = tcp_info.get_attr('INET_DIAG_INFO')['tcpi_bytes_received'] - self.servers[dst]['bytes_received']
                     self.servers[dst].update({
                         'bytes_acked': tcp_info.get_attr('INET_DIAG_INFO')['tcpi_bytes_acked'],
-                        'bytes_received': tcp_info.get_attr('INET_DIAG_INFO')['tcpi_bytes_received']
+                        'bytes_received': tcp_info.get_attr('INET_DIAG_INFO')['tcpi_bytes_received'],
+                        'bitrate_sent': 8 * bytes_sent_delta / timedelta,
+                        'bitrate_received': 8 * bytes_received_delta / timedelta,
+                        'timestamp': now
                     })
-                    for key in ('bytes_acked', 'bytes_received'):
-                        for unit in HUMAN_READABLE_BYTES:
-                            if self.servers[dst][key]/unit[1] > 1:
-                                self.servers[dst][key] = "{0:.2f} {unit}".format(self.servers[dst][key]/unit[1],
-                                                                                 unit=unit[0])
-                                break
             for information in self.servers.values():
-                print("{} : Bytes acked : {} Bytes received : {}".format(colored(information['server'], 'blue'),
-                                                                         colored(information['bytes_acked'], 'red'),
-                                                                         colored(information['bytes_received'], 'green')))
+                print("{} : Bytes acked : {} ({}) Bytes received : {} ({})".format(
+                    colored(information['server'], 'blue'),
+                    colored(get_human_readable_value(information['bytes_acked'])+'B', 'red'),
+                    colored(get_human_readable_value(information['bitrate_sent'])+'bps', 'red'),
+                    colored(get_human_readable_value(information['bytes_received'])+'B', 'green'),
+                    colored(get_human_readable_value(information['bitrate_received'])+'bps', 'green')), file=sys.stderr)
+            await asyncio.sleep(3)
 
     async def execute_command(self, command):
-        async with self.semaphore:
-            process = await asyncio.create_subprocess_exec(*command,
-                                                           stdout=asyncio.subprocess.PIPE,
-                                                           stderr=asyncio.subprocess.PIPE)
-            _ = await process.communicate()
-            self.remaining_scp -= 1
+        await AsyncCommand.execute_command(self, command)
+        self.remaining_scp -= 1
 
     async def execute_commands(self):
         tasks = []
