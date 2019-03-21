@@ -3,8 +3,8 @@ Python 3 Async shell Accelerated.
 The aim of this repository is to share python3 scripts to increase shell productivity.
 
 # Table of Contents
-1. [async_bash.py](#async_bash.py)
-2. [watch.py](#watch.py)
+1. [async_bash.py](#async_bashpy)
+2. [watch.py](#watchpy)
 
 ## async_bash.py
 This script allow to write a shell command line integrating one to many python iterators.
