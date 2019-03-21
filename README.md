@@ -5,6 +5,7 @@ The aim of this repository is to share python3 scripts to increase shell product
 # Table of Contents
 1. [async_bash.py](#async_bashpy)
 2. [watch.py](#watchpy)
+3. [scp.py](#scppy)
 
 ## async_bash.py
 This script allow to write a shell command line integrating one to many python iterators.
@@ -115,4 +116,25 @@ optional arguments:
   -h, --help            show this help message and exit
   -n [INTERVAL], --interval [INTERVAL]
                         Refresh interval
+```
+
+## scp.py
+This script extends the async_bash.py by adding progress information of copied files using netlink socket (with pyroute2) to get the tcp informations.
+
+![](scp.gif)
+
+### Usage
+```
+usage: scp.py [-h] [-s [SEMAPHORE]] [-P [PORT]]
+              [command_line [command_line ...]]
+
+positional arguments:
+  command_line          The same syntax as scp command
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s [SEMAPHORE], --semaphore [SEMAPHORE]
+                        Number of scp command to execute at the same time
+  -P [PORT], --port [PORT]
+                        Specifies the port to connect to on the remote host
 ```
