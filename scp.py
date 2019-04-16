@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 from collections import OrderedDict
 from termcolor import colored
 
-from async_bash import AsyncCommand
+from async_bash import AsyncCommand, bash
 from socket import gethostbyname, gaierror
 from pyroute2.netlink.diag import DiagSocket, AF_INET, SS_ESTABLISHED,\
     IPPROTO_TCP, NLM_F_REQUEST, SOCK_DIAG_BY_FAMILY, inet_diag_req
