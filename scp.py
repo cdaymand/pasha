@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-import os
-import time
 import asyncio
+import os
 import sys
-
+import time
 from argparse import ArgumentParser
 from collections import OrderedDict
+from socket import gaierror, gethostbyname
+
 from termcolor import colored
 
 from async_bash import AsyncCommand, bash
-from socket import gethostbyname, gaierror
-from pyroute2.netlink.diag import DiagSocket, AF_INET, SS_ESTABLISHED,\
-    IPPROTO_TCP, NLM_F_REQUEST, SOCK_DIAG_BY_FAMILY, inet_diag_req
 from pyroute2.netlink import NLM_F_DUMP
-
+from pyroute2.netlink.diag import (AF_INET, IPPROTO_TCP, NLM_F_REQUEST,
+                                   SOCK_DIAG_BY_FAMILY, SS_ESTABLISHED,
+                                   DiagSocket, inet_diag_req)
 
 INET_DIAG_INFO = 2
 HUMAN_READABLE_UNITS = (

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-import json
 import asyncio
+import json
 import sys
-
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 from collections import OrderedDict
 from collections.abc import Iterable
-from termcolor import colored
+from subprocess import PIPE, Popen
+
 from netaddr import IPNetwork
-from subprocess import Popen, PIPE
+from termcolor import colored
 
 
 def bash(command):

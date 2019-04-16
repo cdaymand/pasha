@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-import time
 import os
-
-from subprocess import check_output
-from difflib import ndiff
-from termcolor import colored
-from argparse import ArgumentParser, REMAINDER
+import time
+from argparse import REMAINDER, ArgumentParser
 from datetime import datetime
+from difflib import ndiff
+from subprocess import check_output
+
+from termcolor import colored
 
 
 class WatchProcess():
